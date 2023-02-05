@@ -9,6 +9,7 @@ import { join } from "path";
 import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { GenericTable } from "./GenericTable";
+import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 
 export class SpaceStack extends Stack {
   private api = new RestApi(this, "SpaceApi");
@@ -27,6 +28,10 @@ export class SpaceStack extends Stack {
       entry: join(__dirname, "../services/node-lambda/hello.ts"),
       handler: "handler",
     });
+    const s3ListPolicyStatement = new PolicyStatement();
+    s3ListPolicyStatement.addActions("s3:ListAllMyBuckets");
+    s3ListPolicyStatement.addResources("*");
+    helloLambdaNodejs.addToRolePolicy(s3ListPolicyStatement);
 
     // Hello LambdaIntegration
     const helloLambdaIntegration = new LambdaIntegration(helloLambdaNodejs);
