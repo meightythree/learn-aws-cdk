@@ -23,14 +23,14 @@ export class SpaceStack extends Stack {
       handler: "hello.main",
     });
 
-    // Hello LambdaIntegration
-    const helloLambdaIntegration = new LambdaIntegration(helloLambda);
-    const helloLambdaResource = this.api.root.addResource("hello");
-    helloLambdaResource.addMethod("GET", helloLambdaIntegration);
-
     const helloLambdaNodejs = new NodejsFunction(this, "helloLambdaNodejs", {
       entry: join(__dirname, "../services/node-lambda/hello.ts"),
       handler: "handler",
     });
+
+    // Hello LambdaIntegration
+    const helloLambdaIntegration = new LambdaIntegration(helloLambdaNodejs);
+    const helloLambdaResource = this.api.root.addResource("hello");
+    helloLambdaResource.addMethod("GET", helloLambdaIntegration);
   }
 }
